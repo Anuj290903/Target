@@ -1,4 +1,6 @@
-import React from 'react'; 
+import React, { useState } from 'react'; 
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -81,6 +83,7 @@ export default function AppNavBar() {
   const theme = useTheme();
   const [open, setOpen] = useRecoilState(openState);
   const [admin, setAdmin] = useRecoilState(adminState);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
@@ -120,21 +123,36 @@ export default function AppNavBar() {
             onMouseOver={() => (document.body.style.cursor = "pointer")}
             onClick={() => navigate("/")}
           >
-            LearnAcademy
+            Target
           </Typography>
           {admin.isLoggedIn ? (
             <Button
               color="inherit"
-              onClick={() => {
-                localStorage.removeItem("token");
-                localStorage.removeItem("isLoggedIn");
-                localStorage.removeItem("email");
-                setAdmin({
-                  email: "",
-                  password: "",
-                  isLoggedIn: false,
-                });
-                navigate("/");
+              onClick = {async () => {
+                try {
+                    setIsLoading(true);
+                    const response = await axios.post(
+                      "http://localhost:8000/logout",
+                      {
+                        username: localStorage.getItem("email"),
+                      }
+                    );
+                    setAdmin({
+                      email: "",
+                      username: "",
+                      isLoggedIn: false,
+                    });
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("isLoggedIn");
+                    localStorage.removeItem("email");
+                    toast.success(response.data.message);
+                    setIsLoading(false);
+                    navigate("/");
+                  } catch (err) {
+                    console.error(err);
+                    setMessage(err.response?.data?.message || "Logout failed. Please try again.");
+                    setIsLoading(false);
+                  }
               }}
             >
               Logout

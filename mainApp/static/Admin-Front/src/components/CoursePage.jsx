@@ -32,7 +32,7 @@ function CoursePage() {
   useEffect(() => {
     axios
       .get(
-        `localhost:3000/users/courses/${id}`,
+        `localhost:8000/courses/${id}`,
         {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),
@@ -46,7 +46,7 @@ function CoursePage() {
 
     axios
       .get(
-        "localhost:3000/users/purchasedCourses",
+        "localhost:8000/purchasedCourses",
         {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),
@@ -95,7 +95,7 @@ function CoursePage() {
               onClick={() => {
                 axios
                   .post(
-                    `localhost:3000/users/courses/${id}`,
+                    `localhost:8000/courses/${id}`,
                     {},
                     {
                       headers: {

@@ -22,7 +22,7 @@ function LoginPage() {
       try {
         setIsLoading(true);
         const response = await axios.post(
-          "http://localhost:3000/login",
+          "http://localhost:8000/login",
           {
             username: admin.email,
             password: admin.password,
@@ -55,7 +55,7 @@ function LoginPage() {
       <Grid item xs={11} sm={8} md={4}>
         <Card style={{ padding: '30px', borderRadius: '10px', boxShadow: '0 8px 16px rgba(0,0,0,0.2)' }}>
           <Typography variant="h4" component="div" style={{ textAlign: 'center', marginBottom: '20px', color: '#101460' }}>
-            Login To Admin Dashboard
+            Login Dashboard
           </Typography>
           {message && (
             <Typography color="error" style={{ textAlign: 'center', marginBottom: '15px' }}>
@@ -66,6 +66,7 @@ function LoginPage() {
             fullWidth
             margin="normal"
             id="email"
+            name="email" 
             label="Email"
             variant="outlined"
             type="text"
@@ -76,6 +77,7 @@ function LoginPage() {
             fullWidth
             margin="normal"
             id="password"
+            name="password" 
             label="Password"
             variant="outlined"
             type="password"

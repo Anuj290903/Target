@@ -22,7 +22,7 @@ function ShowCourses() {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get("localhost:3000/admin/courses/", {
+      .get("localhost:8000/courses/", {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },

@@ -22,7 +22,7 @@ function RegisterPage() {
       try {
         setIsLoading(true);
         const response = await axios.post(
-          "http://localhost:3000/admin/signup",
+          "http://localhost:8000/register",
           {
             username: admin.email,
             password: admin.password,
@@ -55,7 +55,7 @@ function RegisterPage() {
       <Grid item xs={11} sm={8} md={4}>
         <Card className="form">
           <Typography variant="h4" component="div" className="title">
-            Register An Admin Account
+            Register Account
           </Typography>
           {message && (
             <Typography className="message">

@@ -1,0 +1,93 @@
+/* Reset default padding and margin */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* App bar styling */
+.appbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #101460;
+  color: #fff;
+}
+
+/* Centering the page content */
+.page {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f2f5;
+  padding: 20px; /* Add some padding to prevent content from touching edges */
+}
+
+/* Styling the form container */
+.page .form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 15px;
+  padding: 40px;
+  border: 2px solid #101460;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  max-width: 400px; /* Set max-width for the form */
+  width: 100%; /* Full width for responsiveness */
+}
+
+/* Input fields styling */
+#email,
+#password {
+  width: 100%;
+}
+
+/* Button styling */
+.button {
+  width: 100%;
+  margin-top: 20px;
+  background-color: #101460;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #0d124a;
+}
+
+/* Message styling */
+.message {
+  font-weight: 500;
+  font-size: 22px;
+  text-align: center;
+  color: rgb(218, 18, 18);
+}
+
+/* Typography improvements */
+.title {
+  text-align: center;
+  margin: 20px 0;
+  color: #101460;
+  font-weight: bold;
+}
+
+.subtitle {
+  text-align: center;
+  margin: 10px 0;
+  color: #6a6a6a;
+  font-weight: 500;
+}
+
+/* Add responsiveness for smaller screens */
+@media (max-width: 600px) {
+  .page .form {
+    padding: 20px;
+  }
+
+  .button {
+    margin-top: 15px;
+  }
+}

@@ -59,7 +59,7 @@ function CoursePage() {
       .catch((err) => console.log(err));
   }, []);
 
-  const isPurchased = purCourses.filter((item) => item._id == id).length === 1;
+  const isPurchased = purCourses.filter((item) => item.id == id).length === 1;
 
   return (
     <div className="single-course">

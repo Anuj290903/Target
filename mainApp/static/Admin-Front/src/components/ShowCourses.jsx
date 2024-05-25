@@ -22,12 +22,13 @@ function ShowCourses() {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get("localhost:8000/courses/", {
+      .get("http://localhost:8000/courses/", {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       })
       .then((res) => {
+        console.log(res.data)
         setCourses(res.data.courses);
       })
       .catch((err) => console.log(err))
@@ -64,7 +65,7 @@ function ShowCourses() {
             <>
               {courses.length > 0
                 ? courses.map((course) => (
-                    <CourseCard key={course._id} course={course} />
+                    <CourseCard key={course.id} course={course} />
                   ))
                 : "Oops! Courses are still not available. Make a new course so that it can be accessed. "}
             </>

@@ -50,7 +50,7 @@ function CreateCourse(props) {
   }
   function updateCourse() {
     fetch(
-      `localhost:3000/admin/courses/${props.course._id}`,
+      `localhost:3000/admin/courses/${props.course.id}`,
       {
         method: "PUT",
         headers: {

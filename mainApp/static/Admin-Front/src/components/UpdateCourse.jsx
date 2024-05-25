@@ -8,7 +8,7 @@ function UpdateCourse() {
 
   useEffect(() => {
     fetch(
-      `localhost:3000/admin/courses/${courseId}`,
+      `localhost:8000/courses/${courseId}`,
       {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),

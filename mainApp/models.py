@@ -10,3 +10,6 @@ class Course(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     published = models.BooleanField(default=False)
     instructor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='courses')
+
+    def __str__(self):
+        return self.title

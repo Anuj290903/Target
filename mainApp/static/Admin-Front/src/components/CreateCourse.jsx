@@ -5,19 +5,19 @@ import { toast } from "react-hot-toast";
 
 function CreateCourse(props) {
   const navigate = useNavigate();
-  const [title, setTitle] = React.useState("");
-  const [description, setDescription] = React.useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [imageLink, setImageLink] = useState("");
   const [published, setPublished] = useState(false);
 
   useEffect(() => {
     if (props.isUpdate) {
-      setTitle(props.course.title);
-      setDescription(props.course.description);
-      setPrice(props.course.price);
-      setImageLink(props.course.imageLink);
-      setPublished(props.course.published);
+      setTitle(props.course.title || "");
+      setDescription(props.course.description || "");
+      setPrice(props.course.price || "");
+      setImageLink(props.course.imageLink || "");
+      setPublished(props.course.published || false);
     }
   }, [props.course]);
 
@@ -43,33 +43,31 @@ function CreateCourse(props) {
         setImageLink("");
         setTitle("");
         setPrice("");
-        setPublished("");
+        setPublished(false);
         navigate("/courses");
       })
       .catch((err) => console.log(err));
   }
+
   function updateCourse() {
-    fetch(
-      `http://localhost:8000/courses/${props.course.id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        body: JSON.stringify({
-          title,
-          description,
-          price,
-          imageLink,
-          published,
-        }),
-      }
-    )
+    fetch(`http://localhost:8000/courses/${props.course.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      body: JSON.stringify({
+        title,
+        description,
+        price,
+        imageLink,
+        published,
+      }),
+    })
       .then((response) => response.json())
       .then((data) => {
         toast.success(data.message);
-        navigate(`/courses`);
+        navigate("/courses");
       })
       .catch((err) => console.log(err));
   }
@@ -89,8 +87,8 @@ function CreateCourse(props) {
       setImageLink={setImageLink}
       published={published}
       setPublished={setPublished}
-    ></CourseForm>
+    />
   );
 }
-export default CreateCourse;
 
+export default CreateCourse;

@@ -13,7 +13,6 @@ from django.core import serializers
 from django.conf import settings
 # from .forms import User
 
-# Correct frontend issue of controllend and uncontrolled with Update 
 # Add website icon 
 # Add access control for users and admin
 # Add video uploadability and extend on the course model  
@@ -90,34 +89,32 @@ def courses_view(request):
             return JsonResponse({'error': 'Invalid JSON'}, status=400)  
 
 
+@csrf_exempt
 def courses_id(request, ID):
+    try:
+        course = Course.objects.get(id=ID)
+    except Course.DoesNotExist:
+        return JsonResponse({'error': 'Course not found'}, status=404)
+    
     if request.method == 'DELETE':
-        try:
-            course = Course.objects.get(id=ID)
-            course.delete()
-            return JsonResponse({'message': 'Course deleted successfully'})
-        except Course.DoesNotExist:
-            return JsonResponse({'error': 'Course not found'}, status=404)  
+        course.delete()
+        return JsonResponse({'message': 'Course deleted successfully'}, status=200)
+
     elif request.method == 'PUT':
         try:
             data = json.loads(request.body)
-            course = Course.objects.get(id=ID)
-            course.title = data.get('title')
-            course.description = data.get('description')
-            course.price = data.get('price')
-            course.published = data.get('published')
-            # course.instructor = data.get('instructor')
+            course.title = data.get('title', course.title)
+            course.description = data.get('description', course.description)
+            course.price = data.get('price', course.price)
+            course.published = data.get('published', course.published)
+            # course.instructor = data.get('instructor', course.instructor)
             course.save()
-            return JsonResponse({'Success': 'Updated Successfully'})
-        except Course.DoesNotExist:
-            return JsonResponse({'error': 'Course not found'}, status=404)
+            return JsonResponse({'message': 'Course updated successfully'}, status=200)
         except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)  
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
-    else:
-        try:
-            course = Course.objects.get(id=ID)
-            serializer = CourseSerializer(course)
-            return JsonResponse({'course' : serializer.data}, status=200)
-        except Course.DoesNotExist:
-            return JsonResponse({'error': 'Course not found'}, status=404)      
+    elif request.method == 'GET':
+        serializer = CourseSerializer(course)
+        return JsonResponse({'course': serializer.data}, status=200)
+
+    return JsonResponse({'error': 'Method not allowed'}, status=405)

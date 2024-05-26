@@ -22,7 +22,7 @@ function CreateCourse(props) {
   }, [props.course]);
 
   function createCourse() {
-    fetch("localhost:3000/admin/courses", {
+    fetch("http://localhost:8000/courses", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,7 +50,7 @@ function CreateCourse(props) {
   }
   function updateCourse() {
     fetch(
-      `localhost:3000/admin/courses/${props.course.id}`,
+      `http://localhost:8000/courses/${props.course.id}`,
       {
         method: "PUT",
         headers: {

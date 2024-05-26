@@ -8,13 +8,16 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from .models import User, Course
+from .serializers import CourseSerializer
+from django.core import serializers
 from django.conf import settings
 # from .forms import User
 
+# Correct frontend issue of controllend and uncontrolled with Update 
 # Add website icon 
 # Add access control for users and admin
-# Add video uploadability and extend on the course model
- 
+# Add video uploadability and extend on the course model  
+
 def index(request):
     return render(request, "index.html")
 
@@ -75,8 +78,16 @@ def courses_view(request):
         courses = Course.objects.all()
         courses_list = list(courses.values())
         return JsonResponse({'courses' : courses_list})
-    else:
-        return JsonResponse({'error': 'Invalid request method'}, status=405)    
+    elif request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            teacher = User.objects.get(username="Siddhant")
+            course = Course(title=data.get('title'), description=data.get('description'), price=data.get('price'), published=data.get('published'), instructor=teacher)
+            course.save()
+
+            return JsonResponse({'Success': 'Saved Successfully'})
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)  
 
 
 def courses_id(request, ID):
@@ -86,10 +97,8 @@ def courses_id(request, ID):
             course.delete()
             return JsonResponse({'message': 'Course deleted successfully'})
         except Course.DoesNotExist:
-            return JsonResponse({'error': 'Course not found'}, status=404)
-        
-    # Correct/Implement - Update and Create Course APIs    
-    elif request.method == 'UPDATE':
+            return JsonResponse({'error': 'Course not found'}, status=404)  
+    elif request.method == 'PUT':
         try:
             data = json.loads(request.body)
             course = Course.objects.get(id=ID)
@@ -97,10 +106,18 @@ def courses_id(request, ID):
             course.description = data.get('description')
             course.price = data.get('price')
             course.published = data.get('published')
-            course.instructor = data.get('instructor')
+            # course.instructor = data.get('instructor')
             course.save()
-            return JsonResponse({'course': course})
+            return JsonResponse({'Success': 'Updated Successfully'})
         except Course.DoesNotExist:
             return JsonResponse({'error': 'Course not found'}, status=404)
         except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)  
+
+    else:
+        try:
+            course = Course.objects.get(id=ID)
+            serializer = CourseSerializer(course)
+            return JsonResponse({'course' : serializer.data}, status=200)
+        except Course.DoesNotExist:
+            return JsonResponse({'error': 'Course not found'}, status=404)      

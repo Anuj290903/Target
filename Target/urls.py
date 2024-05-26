@@ -28,7 +28,7 @@ urlpatterns = [
     path('login', login_view, name='login'),
     path('logout', logout_view, name='logout'),
     path('register', register_view, name='register'),
-    path('courses/', courses_view, name='courses'),
+    path('courses', courses_view, name='courses'),
     path('courses/<int:ID>', courses_id, name='courses_id'),
     # path('', include(router.urls)),
     # path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

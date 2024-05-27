@@ -7,11 +7,11 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { coursesState } from "./ShowCourses";
+import { uploadsState } from "./ShowUpload";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
-function CourseCard(props) {
+function UploadCard(props) {
   // 
   // Just before Card Content if image is there <CardMedia
   //           sx={{ height: 200, width: 350 }}
@@ -20,22 +20,22 @@ function CourseCard(props) {
   //          /> 
   const navigate = useNavigate();
   const [isMoveOver, setIsMoueOver] = useState(false);
-  const [courses, setCourses] = useRecoilState(coursesState);
+  const [uploads, setUploads] = useRecoilState(uploadsState);
 
-  function deleteCourse() {
+  function deleteUpload() {
     var userInput = window.prompt("Type DELETE to delete the course: ");
-    const id = props.course.id;
+    const id = props.upload.id;
     if (userInput === "DELETE") {
       axios
-        .delete(`http://localhost:8000/courses/${id}`, {
+        .delete(`http://localhost:8000/upload/${id}`, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
         })
         .then((res) => {
-          setCourses(courses.filter((course) => course.id !== id));
+          setUploads(uploads.filter((upload) => upload.id !== id));
           toast.success(res.data.message);
-          navigate("/courses");
+          navigate(`/uploads/${props.courseId}`);
         })
         .catch((err) => console.log(err));
     }
@@ -69,7 +69,7 @@ function CourseCard(props) {
               WebkitBoxOrient: "vertical",
             }}
           >
-            {props.course.title}
+            {props.upload.title}
           </Typography>
           <Typography
             gutterBottom
@@ -85,21 +85,21 @@ function CourseCard(props) {
               textOverflow: "ellipsis",
             }}
           >
-            {props.course.description}
+            {props.upload.description && props.upload.description }
           </Typography>
         </CardContent>
         <div style={{ margin: "auto", marginTop: "auto" }}>
           <Button
             variant="contained"
             style={{ backgroundColor: "green", marginRight: "5px" }}
-            onClick={() => navigate(`/UpdateCourse/${props.course.id}`)}
+            onClick={() => navigate(`/UpdateUpload/${props.upload.id}`)}
           >
             Update
           </Button>
           <Button
             variant="contained"
             style={{ backgroundColor: "#bc1c44" }}
-            onClick={() => deleteCourse()}
+            onClick={() => deleteUpload()}
           >
             Delete
           </Button>
@@ -109,12 +109,12 @@ function CourseCard(props) {
   );
 }
 
-CourseCard.propTypes = {
-  course: PropTypes.shape({
+UploadCard.propTypes = {
+  upload: PropTypes.shape({
     id: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
   }).isRequired,
+  courseId: PropTypes.string.isRequired,
 };
 
-export default CourseCard;
+export default UploadCard;

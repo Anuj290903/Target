@@ -7,14 +7,15 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-from .models import User, Course
-from .serializers import CourseSerializer
+from .models import User, Course, Upload
+from .serializers import CourseSerializer, UploadSerializer
 from django.core import serializers
 from django.conf import settings
-# from .forms import User
+from .forms import UploadForm
 
 # Add website icon 
 # Add access control for users and admin
+# Recieve course id in upload function and implement video & file input
 # Add video uploadability and extend on the course model  
 
 def index(request):
@@ -116,5 +117,56 @@ def courses_id(request, ID):
     elif request.method == 'GET':
         serializer = CourseSerializer(course)
         return JsonResponse({'course': serializer.data}, status=200)
+
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+def course_upload(request, ID):
+    course = Course.objects.get(id=ID)
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            upload = Upload(
+                title=data.get('title'), 
+                description=data.get('description', None),
+                vidFile=data.get('vidFile', None),
+                course=course,
+                probSet=data.get('probSet', None)
+            )
+            upload.save()
+            return JsonResponse({'Success': 'Uploaded Successfully'})
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)  
+    elif request.method == 'GET':
+        uploads = Upload.objects.filter(course=course)
+        uploads_list = list(uploads.values())
+        return JsonResponse({'uploads' : uploads_list})
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+def upload_id(request, ID):
+    try:
+        upload = Upload.objects.get(id=ID)
+    except Upload.DoesNotExist:
+        return JsonResponse({'error': 'Upload not found'}, status=404)
+    
+    if request.method == 'DELETE':
+        upload.delete()
+        return JsonResponse({'message': 'Upload deleted successfully'}, status=200)
+
+    elif request.method == 'PUT':
+        try:
+            data = json.loads(request.body)
+            upload.title = data.get('title', upload.title)
+            upload.description = data.get('description', upload.description)
+            upload.vidFile = data.get('vidFile', upload.vidFile)
+            # upload.course = data.get('course', upload.course)
+            upload.probSet = data.get('probSet', upload.probSet)
+            upload.save()
+            return JsonResponse({'message': 'Upload updated successfully'}, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    elif request.method == 'GET':
+        serializer = UploadSerializer(upload)
+        return JsonResponse({'upload': serializer.data}, status=200)
 
     return JsonResponse({'error': 'Method not allowed'}, status=405)

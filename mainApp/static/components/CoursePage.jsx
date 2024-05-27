@@ -179,8 +179,7 @@ function CoursePage() {
                           <SignalCellularAltIcon />
                         </ListItemIcon>
                         <ListItemText
-                          primary="Beginner to Pro
-"
+                          primary="Beginner to Pro"
                         />
                       </ListItemButton>
                     </ListItem>
@@ -222,8 +221,7 @@ function CoursePage() {
                           <MilitaryTechIcon />
                         </ListItemIcon>
                         <ListItemText
-                          primary="Certificate of completion
-"
+                          primary="Certificate of completion"
                         />
                       </ListItemButton>
                     </ListItem>
@@ -233,8 +231,7 @@ function CoursePage() {
                           <AllInclusiveIcon />
                         </ListItemIcon>
                         <ListItemText
-                          primary="Lifetime access
-"
+                          primary="Lifetime access"
                         />
                       </ListItemButton>
                     </ListItem>

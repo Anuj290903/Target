@@ -2,10 +2,10 @@ const path = require('path');
 
 module.exports = {
   mode: 'development',
-  entry: './mainApp/static/Admin-Front/src/main.jsx',
+  entry: './mainApp/static/main.jsx',
   output: {
     filename: 'Compile.js',
-    path: path.resolve(__dirname, 'mainApp/static/Admin-Front/src/'),
+    path: path.resolve(__dirname, 'mainApp/static/'),
   },
   module: {
     rules: [

@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractUser
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 class User(AbstractUser):
     is_admin = models.BooleanField(default=False)
@@ -31,10 +33,10 @@ def validate_pdf_file(file):
 class Upload(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
-    vidFile = models.FileField(blank=True, null=True, upload_to='uploads/', validators=[validate_video_file])
+    vidFile = models.FileField(blank=True, null=True, upload_to='video/', validators=[validate_video_file])
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='uploads')
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    probSet = models.FileField(blank=True, null=True, upload_to='assets/', validators=[validate_pdf_file])
+    probSet = models.FileField(blank=True, null=True, upload_to='pdf/', validators=[validate_pdf_file])
 
     def __str__(self):
         return self.title

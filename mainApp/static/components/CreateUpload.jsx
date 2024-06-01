@@ -2,6 +2,26 @@ import React, { useEffect, useState } from "react";
 import UploadForm from "./UploadForm";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import axios from "axios";
+// const [videoSrc , setVideoSrc] = useState("");
+// const handleChange = ({file}) => {
+//   var reader = new FileReader();
+//   console.log(file)
+//   var url = URL.createObjectURL(file.originFileObj);
+//   setVideoSrc(url);
+// };
+
+// import "../node_modules/video-react/dist/video-react.css";
+// import { Player } from "video-react";
+
+//   <Player
+//       playsInline
+//       src={videoSrc}
+//       fluid={false}
+//       width={480}
+//       height={272}
+//   />
+
 
 function CreateUpload(props) {
   const navigate = useNavigate();
@@ -9,34 +29,36 @@ function CreateUpload(props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [course, setCourse] = useState("");
-  const [probSet, setProbSet] = useState("");
-  const [vidFile, setVidFile] = useState("");
+  const [probSet, setProbSet] = useState(null);
+  const [vidFile, setVidFile] = useState(null);
 
   useEffect(() => {
     if (props.isUpdate) {
       setTitle(props.upload.title || "");
       setDescription(props.upload.description || "");
       setCourse(props.upload.course || "");
-      setProbSet(props.upload.probSet || "");
-      setVidFile(props.upload.vidFile || "");
+      setProbSet(props.upload.probSet || null);
+      setVidFile(props.upload.vidFile || null);
       setCourse(props.upload.courseId || "");
     }
   }, [props.upload]);
 
   function createUpload(courseId) {
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('description', description);
+    if (vidFile) formData.append('vidFile', vidFile);
+    if (probSet) formData.append('probSet', probSet);
+    for (let pair of formData.entries()) {
+      console.log(pair[0]+ ': ' + pair[1]); 
+  }
     fetch(`http://localhost:8000/course_upload/${courseId}`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        // 'Content-Type': 'multipart/form-data',
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
-      body: JSON.stringify({
-        title,
-        description,
-        course,
-        probSet,
-        vidFile,
-      }),
+      body: formData,
     })
       .then((response) => response.json())
       .then((data) => {
@@ -44,29 +66,29 @@ function CreateUpload(props) {
         setDescription("");
         setTitle("");
         setCourse("");
-        setVidFile("");
-        setProbSet("");
+        setVidFile(null);
+        setProbSet(null);
         navigate(`/uploads/${courseId}`);
       })
       .catch((err) => console.log(err));
   }
 
   function updateUpload(courseId) {
-    fetch(`http://localhost:8000/upload/${props.upload.id}`, {
-      method: "PUT",
+    const formData = new FormData();
+    formData.append('title', title);
+    if (description) formData.append('description', description);
+    if (vidFile) formData.append('vidFile', vidFile);
+    if (probSet) formData.append('probSet', probSet);
+    for (let pair of formData.entries()) {
+      console.log(pair[0]+ ': ' + pair[1]); 
+  }
+  axios.post(`http://localhost:8000/upload/${props.upload.id}`, formData, {
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'multipart/form-data',
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
-      body: JSON.stringify({
-        title,
-        description,
-        course,
-        probSet,
-        vidFile,
-      }),
     })
-      .then((response) => response.json())
+      .then((response) => response.data)
       .then((data) => {
         toast.success(data.message);
         console.log(`courseId:${course}`);

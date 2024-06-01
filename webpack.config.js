@@ -23,6 +23,18 @@ module.exports = {
           },
         },
       },
+      {
+        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'mainApp/static/assets',
+            },
+          },
+        ],
+      },
     ],
   },
   resolve: {

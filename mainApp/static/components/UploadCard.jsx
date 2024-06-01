@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Card from "@mui/material/Card";
 import PropTypes from "prop-types";
-// import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
@@ -12,12 +12,6 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 
 function UploadCard(props) {
-  // 
-  // Just before Card Content if image is there <CardMedia
-  //           sx={{ height: 200, width: 350 }}
-  //           image={props.course.imageLink}
-  //           title={props.course.title}
-  //          /> 
   const navigate = useNavigate();
   const [isMoveOver, setIsMoueOver] = useState(false);
   const [uploads, setUploads] = useRecoilState(uploadsState);
@@ -85,9 +79,28 @@ function UploadCard(props) {
               textOverflow: "ellipsis",
             }}
           >
-            {props.upload.description && props.upload.description }
+            {props.upload.description && props.upload.description}
           </Typography>
-        </CardContent>
+          <Typography>
+          {props.upload.probSet && (
+            <a href={`http://127.0.0.1:8000/media/pdf/${props.upload.probSet.split('/').pop()}`} target="_blank" rel="noopener noreferrer">
+              <Button variant="contained" color="primary">
+                View Attachment
+              </Button>
+            </a>
+          )}
+          </Typography>
+          </CardContent>
+          {props.upload.vidFile && props.upload.vidFile !== '{}' && (
+          <CardMedia
+            component="video"
+            controls
+            src={`http://127.0.0.1:8000/media/video/${props.upload.vidFile.split('/').pop()}`}
+            title={props.upload.title}
+            sx={{ height: 200 }}
+          />
+        )}
+
         <div style={{ margin: "auto", marginTop: "auto" }}>
           <Button
             variant="contained"

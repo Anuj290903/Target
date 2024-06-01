@@ -1,10 +1,14 @@
-{% extends "layout.html" %}
 {% load static %}
-{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{% block title %}Target{% endblock %}</title>
+    </head>
+    <body>
+    {% block body %}
     <link rel="icon" href="{% static 'favicon.ico' %}" />
-    <div id="root" style="display: flex; justify-content: center; align-items: center;"></div>
-    <br>
-    <h4>Welcome to Target!</h4>
-    <br>
+    <div id="root"></div>
     <script src="{% static 'Compile.js' %}"></script>
-{% endblock %}
+    {% endblock %}    
+    </body>
+</html>                

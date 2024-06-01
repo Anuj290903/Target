@@ -8,8 +8,8 @@ function UpdateUpload() {
     id: uploadId,
     title: "",
     description: "",
-    probSet: "",
-    vidFile: "",
+    probSet: null,
+    vidFile: null,
     courseId: "",
   });
 
@@ -27,8 +27,8 @@ function UpdateUpload() {
           title: data.upload.title || "",
           description: data.upload.description || "",
           probSet: data.upload.probSet || "",
-          vidFile: data.upload.vidFile || "",
-          courseId: data.upload.course || "",
+          vidFile: data.upload.vidFile || null,
+          courseId: data.upload.course || null,
         });
       })
       .catch((err) => console.log(err));

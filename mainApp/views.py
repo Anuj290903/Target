@@ -11,12 +11,19 @@ from .models import User, Course, Upload
 from .serializers import CourseSerializer, UploadSerializer
 from django.core import serializers
 from django.conf import settings
-from .forms import UploadForm
 
-# Add website icon 
+# Add website icon
+# Completely transform and improve the front-end.
+# Add a search bar for courses
+# Texts are slightly left shifted and all characters are not visible
+# for no courses (in ShowCourse) and no uploads in (ShowUploads)
 # Add access control for users and admin
-# Recieve course id in upload function and implement video & file input
-# Add video uploadability and extend on the course model  
+# Add url refresh correction
+# Implement React Query for making get requests
+# Implement Context API for state management
+# Implement Shared Database and Cloud Service
+# Add payment gateway
+# Add live video and chat functionality in course (WebRTC) 
 
 def index(request):
     return render(request, "index.html")
@@ -123,47 +130,63 @@ def courses_id(request, ID):
 def course_upload(request, ID):
     course = Course.objects.get(id=ID)
     if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            upload = Upload(
-                title=data.get('title'), 
-                description=data.get('description', None),
-                vidFile=data.get('vidFile', None),
-                course=course,
-                probSet=data.get('probSet', None)
-            )
-            upload.save()
-            return JsonResponse({'Success': 'Uploaded Successfully'})
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)  
+        data = request.POST
+        vidFile = request.FILES.get('vidFile', None)
+        probSet = request.FILES.get('probSet', None)
+        
+        upload = Upload(
+            title=data.get('title'), 
+            description= data.get('description', ""), 
+            course=course, 
+            vidFile=vidFile, 
+            probSet=probSet,
+        )
+        upload.save()
+        return JsonResponse({'Success' : 'Created Successfully'}, status=201) 
     elif request.method == 'GET':
         uploads = Upload.objects.filter(course=course)
         uploads_list = list(uploads.values())
         return JsonResponse({'uploads' : uploads_list})
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-def upload_id(request, ID):
+def upload(request, ID):
     try:
         upload = Upload.objects.get(id=ID)
     except Upload.DoesNotExist:
         return JsonResponse({'error': 'Upload not found'}, status=404)
     
     if request.method == 'DELETE':
+        if upload.vidFile:
+            upload.vidFile.delete()
+        if upload.probSet:
+            upload.probSet.delete()
         upload.delete()
         return JsonResponse({'message': 'Upload deleted successfully'}, status=200)
 
-    elif request.method == 'PUT':
-        try:
-            data = json.loads(request.body)
-            upload.title = data.get('title', upload.title)
-            upload.description = data.get('description', upload.description)
-            upload.vidFile = data.get('vidFile', upload.vidFile)
-            # upload.course = data.get('course', upload.course)
-            upload.probSet = data.get('probSet', upload.probSet)
-            upload.save()
-            return JsonResponse({'message': 'Upload updated successfully'}, status=200)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    elif request.method == 'POST':
+        data = request.POST
+
+        for key, value in data.items():
+            print(f"POST key: {key}, value: {value}")
+
+        if data.get('title'):
+            upload.title = data.get('title')
+        if data.get('description'):
+            upload.description=data.get('description')
+        print(f"Title: {upload.title} Description: {upload.description}")
+        vidFile = (request.FILES.get('vidFile'))
+        probSet = (request.FILES.get('probSet'))
+        if vidFile:
+            if upload.vidFile:
+                upload.vidFile.delete(save=False)
+            upload.vidFile = vidFile
+        if probSet:
+            if upload.probSet:
+                upload.probSet.delete(save=False)
+            upload.probSet = probSet
+
+        upload.save()
+        return JsonResponse({'message': 'Upload updated successfully'}, status=200)
 
     elif request.method == 'GET':
         serializer = UploadSerializer(upload)

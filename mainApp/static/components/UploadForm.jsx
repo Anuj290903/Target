@@ -21,9 +21,9 @@ function UploadForm({
   setDescription,
   course = '',
   setCourse,
-  probSet = '',
+  probSet=null,
   setProbSet,
-  vidFile = '',
+  vidFile=null,
   setVidFile,
   courseId,
 }) {
@@ -72,24 +72,21 @@ function UploadForm({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
-        <TextField
-          id = "vidFile"
-          className="input"
-          label="Video URL"
-          variant="outlined"
-          type="text"
-          value={vidFile}
-          onChange={(e) => setVidFile(e.target.value)}
-        />
-         <TextField
-          id = "probSet"
-          className="input"
+        <input 
+          type="file" 
+          id="vidFile" 
+          label="Video File"
+          accept="video/*"
+          onChange={(e) => setVidFile(e.target.files[0])} 
+        /> Upload Video
+        <input 
+          type="file" 
+          id="probSet" 
           label="PDF File"
-          variant="outlined"
-          type="text"
-          value={probSet}
-          onChange={(e) => setProbSet(e.target.value)}
+          accept="application/pdf"
+          onChange={(e) => setProbSet(e.target.files[0])} 
         />
+        Upload Pdf
         <br />
         <Button
           style={{ backgroundColor: '#101460' }}

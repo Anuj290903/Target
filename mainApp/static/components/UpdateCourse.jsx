@@ -13,7 +13,7 @@ function UpdateCourse() {
   });
 
   useEffect(() => {
-    fetch(`http://localhost:8000/courses/${courseId}`, {
+    fetch(`http://localhost:8000/courses_api/${courseId}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },

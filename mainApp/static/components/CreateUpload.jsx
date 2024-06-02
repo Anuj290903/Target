@@ -52,7 +52,7 @@ function CreateUpload(props) {
     for (let pair of formData.entries()) {
       console.log(pair[0]+ ': ' + pair[1]); 
   }
-    fetch(`http://localhost:8000/course_upload/${courseId}`, {
+    fetch(`http://localhost:8000/course_upload_api/${courseId}`, {
       method: 'POST',
       headers: {
         // 'Content-Type': 'multipart/form-data',
@@ -82,7 +82,7 @@ function CreateUpload(props) {
     for (let pair of formData.entries()) {
       console.log(pair[0]+ ': ' + pair[1]); 
   }
-  axios.post(`http://localhost:8000/upload/${props.upload.id}`, formData, {
+  axios.post(`http://localhost:8000/upload_api/${props.upload.id}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: "Bearer " + localStorage.getItem("token"),

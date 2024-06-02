@@ -132,7 +132,7 @@ export default function AppNavBar() {
                 try {
                     setIsLoading(true);
                     const response = await axios.post(
-                      "http://localhost:8000/logout",
+                      "http://localhost:8000/logout_api",
                       {
                         username: localStorage.getItem("email"),
                       }

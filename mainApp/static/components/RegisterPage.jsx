@@ -22,7 +22,7 @@ function RegisterPage() {
       try {
         setIsLoading(true);
         const response = await axios.post(
-          "http://localhost:8000/register",
+          "http://localhost:8000/register_api",
           {
             username: admin.email,
             password: admin.password,

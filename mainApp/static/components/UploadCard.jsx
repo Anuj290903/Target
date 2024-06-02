@@ -21,7 +21,7 @@ function UploadCard(props) {
     const id = props.upload.id;
     if (userInput === "DELETE") {
       axios
-        .delete(`http://localhost:8000/upload/${id}`, {
+        .delete(`http://localhost:8000/upload_api/${id}`, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),
           },

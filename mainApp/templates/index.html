@@ -2,11 +2,11 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <link rel="icon" href="{% static 'favicon.ico' %}" />
         <title>{% block title %}Target{% endblock %}</title>
     </head>
     <body>
     {% block body %}
-    <link rel="icon" href="{% static 'favicon.ico' %}" />
     <div id="root"></div>
     <script src="{% static 'Compile.js' %}"></script>
     {% endblock %}    

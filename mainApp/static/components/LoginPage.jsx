@@ -22,7 +22,7 @@ function LoginPage() {
       try {
         setIsLoading(true);
         const response = await axios.post(
-          "http://localhost:8000/login",
+          "http://localhost:8000/login_api",
           {
             username: admin.email,
             password: admin.password,

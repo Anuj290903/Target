@@ -27,7 +27,7 @@ function CourseCard(props) {
     const id = props.course.id;
     if (userInput === "DELETE") {
       axios
-        .delete(`http://localhost:8000/courses/${id}`, {
+        .delete(`http://localhost:8000/courses_api/${id}`, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),
           },

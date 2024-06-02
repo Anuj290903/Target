@@ -14,7 +14,7 @@ function UpdateUpload() {
   });
 
   useEffect(() => {
-    fetch(`http://localhost:8000/upload/${uploadId}`, {
+    fetch(`http://localhost:8000/upload_api/${uploadId}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },

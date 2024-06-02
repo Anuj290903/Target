@@ -12,15 +12,14 @@ from .serializers import CourseSerializer, UploadSerializer
 from django.core import serializers
 from django.conf import settings
 
-# Add website icon
-# Completely transform and improve the front-end.
-# Add a search bar for courses
-# Texts are slightly left shifted and all characters are not visible
-# for no courses (in ShowCourse) and no uploads in (ShowUploads)
+# Add image upload in courses
 # Add access control for users and admin
-# Add url refresh correction
 # Implement React Query for making get requests
 # Implement Context API for state management
+# Add a search bar for courses
+# Completely transform and improve the front-end.
+# Texts are slightly left shifted and all characters are not visible
+# for no courses (in ShowCourse) and no uploads in (ShowUploads)
 # Implement Shared Database and Cloud Service
 # Add payment gateway
 # Add live video and chat functionality in course (WebRTC) 

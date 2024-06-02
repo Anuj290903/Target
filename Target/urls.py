@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from mainApp.views import login_view, logout_view, register_view, index, courses_view, courses_id, course_upload, upload
 from django.conf import settings
 from django.conf.urls.static import static
@@ -26,13 +26,13 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index, name='index'),
-    path('login', login_view, name='login'),
-    path('logout', logout_view, name='logout'),
-    path('register', register_view, name='register'),
-    path('courses', courses_view, name='courses'),
-    path('courses/<int:ID>', courses_id, name='courses_id'),
-    path('course_upload/<int:ID>', course_upload, name='course_upload'),
-    path('upload/<int:ID>', upload, name='upload'),
+    path('login_api', login_view, name='login_api'),
+    path('logout_api', logout_view, name='logout_api'),
+    path('register_api', register_view, name='register_api'),
+    path('courses_api', courses_view, name='courses_api'),
+    path('courses_api/<int:ID>', courses_id, name='courses_id_api'),
+    path('course_upload_api/<int:ID>', course_upload, name='course_upload_api'),
+    path('upload_api/<int:ID>', upload, name='upload_api'),
     # path('', include(router.urls)),
     # path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     # path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -40,3 +40,5 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += [re_path(r'^.*$', index)]    

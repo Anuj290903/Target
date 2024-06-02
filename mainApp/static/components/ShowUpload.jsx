@@ -24,7 +24,7 @@ function ShowUpload() {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get(`http://localhost:8000/course_upload/${courseId}`, {
+      .get(`http://localhost:8000/course_upload_api/${courseId}`, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },

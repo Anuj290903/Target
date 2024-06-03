@@ -5,6 +5,10 @@
   padding-left: 400px;
   padding-top: 200px;
   gap: 50px;
+  background-color: #1d0672; 
+  background-size: cover; 
+  background-position: center; 
+  
 }
 
 .text-content {
@@ -20,6 +24,7 @@
 .title {
   font-size: 50px;
   font-weight: 700;
+  color: #f7f5f5; 
 }
 
 .description {
@@ -34,7 +39,7 @@
 }
 
 .button-style {
-  background-color: #bc1c44;
+  background-color: #5c1cbc;
   color: white;
   border: 0;
   padding: 10px 20px;
@@ -43,6 +48,230 @@
   border-radius: 50px;
   width: 12rem;
   height: 3.2rem;
+}
+
+.why-target-strip {
+  width: 100%;
+  padding: 20px 0;
+  background-color: #ffffff;
+  color: rgb(9, 8, 8);
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 20px; /* Adjust the margin to control spacing */
+  font-family: Helvetica,Arial,sans-serif;
+}
+
+.why-target-strip h2 {
+  font-size: 2rem;
+  color: #000000;
+  margin-bottom: 10px;
+  font-weight: bold;
+  
+}
+
+.why-target-strip p {
+  font-size: 1.2rem;
+  color: #0a0909;
+}
+
+.info-blocks {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding: 20px;
+  margin-top: 20px;
+  gap: 20px;
+}
+
+.info-block {
+  flex: 1;
+  background-color: #05078739;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s;
+}
+
+.info-block:hover {
+  transform: translateY(-10px);
+}
+
+.info-block h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.info-block p {
+  font-size: 1rem;
+  color: #0a0202;
+}
+
+.results-block {
+  width: 100%;
+  padding: 40px;
+  background-color: #ffffff;
+  text-align: center;
+  margin-top: 20px; /* Adjust the margin to control spacing */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.results-block h3 {
+  font-size: 2.0rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.results-img {
+  width: 80%;
+  max-width: 600px;
+  height: auto;
+  border-radius: 10px; 
+}
+
+.testimonials-block {
+  width: 100%;
+  padding: 40px;
+  background-color: #ffffff;
+  text-align: center;
+  margin-top: 20px; 
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.testimonials-block h3 {
+  font-size: 2.0rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.testimonials-content {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.testimonial {
+  flex: 1;
+  background-color: #05078739;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s;
+}
+
+.testimonial h4 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+.testimonial:hover {
+  transform: translateY(-10px);
+}
+
+.testimonial p {
+  font-size: 1rem;
+  color: #181515;
+}
+
+.testimonial-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.courses-block {
+  width: 100%;
+  padding: 40px;
+  background-color: #f9f9f9;
+  text-align: center;
+  margin-top: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.courses-block h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.courses-content {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.course-block {
+  flex: 1;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s;
+}
+
+.course-block:hover {
+  transform: translateY(-10px);
+}
+
+.course-block h4 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.course-img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.info-strip {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+  background-color: #f0f0f0;
+  margin-top: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.info-strip-item {
+  font-size: 1.2rem;
+  color: #333;
+  text-align: center;
+  flex: 1;
+  padding: 10px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.info-strip-item:hover {
+  background-color: #bc1c44;
+  color: white;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .info-blocks, .testimonials-content, .courses-content, .info-strip {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .info-block, .testimonial, .course-block, .info-strip-item {
+    width: 80%;
+    margin-bottom: 20px;
+  }
 }
 
 @media (max-width: 480px) {

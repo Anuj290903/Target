@@ -9,6 +9,7 @@ import { useParams } from "react-router-dom";
 import { Main, openState } from "./AppNavBar";
 import "./coursesStyles.css";
 import Skeleton from "@mui/material/Skeleton";
+import { useGetAPI } from "./useGetAPI";
 
 const uploadsState = atom({
   key: "uploadsState",
@@ -18,24 +19,12 @@ const uploadsState = atom({
 function ShowUpload() {
   const [uploads, setUploads] = useRecoilState(uploadsState);
   const [open] = useRecoilState(openState);
-  const [isLoading, setIsLoading] = useState(false);
-  const { courseId } = useParams()
+  const { courseId } = useParams();
+  const [data, error, isLoading] = useGetAPI(`http://localhost:8000/course_upload_api/${courseId}`);
 
   useEffect(() => {
-    setIsLoading(true);
-    axios
-      .get(`http://localhost:8000/course_upload_api/${courseId}`, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((res) => {
-        console.log(res.data)
-        setUploads(res.data.uploads);
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setIsLoading(false));
-  }, []);
+      if (data && data.uploads) setUploads(data.uploads);
+  }, [data]);
 
   return (
     <>
@@ -80,7 +69,3 @@ function ShowUpload() {
 
 export default ShowUpload;
 export { uploadsState };
-
-
-
-

@@ -22,42 +22,20 @@ import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
 import AllInclusiveIcon from "@mui/icons-material/AllInclusive";
 import Button from "@mui/material/Button";
 import { toast } from "react-hot-toast";
+import { useGetAPI } from "./useGetAPI";
 import "./coursesStyles.css";
 
 function CoursePage() {
   const { id } = useParams();
   const [course, setCourse] = useState({});
   const [purCourses, setPurchasedCourses] = useState([]);
+  const [ courseData, courseError, isLoading ] = useGetAPI(`localhost:8000/courses_api/${id}`)
+  const [ purchaseData, purchaseError ] = useGetAPI("localhost:8000/purchasedCourses")
 
   useEffect(() => {
-    axios
-      .get(
-        `localhost:8000/courses_api/${id}`,
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
-      )
-      .then((res) => {
-        setCourse(res.data.course);
-      })
-      .catch((err) => console.log(err));
-
-    axios
-      .get(
-        "localhost:8000/purchasedCourses",
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
-      )
-      .then((res) => {
-        setPurchasedCourses(res.data.purchasedCourses);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+    if (courseData.course) setCourse(courseData.course);
+    if (purchaseData.purchasedCourses) setPurchasedCourses(purchaseData.purchasedCourses);
+  }, [courseData, purchaseData]);
 
   const isPurchased = purCourses.filter((item) => item.id == id).length === 1;
 
@@ -66,8 +44,8 @@ function CoursePage() {
       <div className="text-container">
         <div>
           <img
-            src={course.imageLink}
-            alt={course.imageLink}
+            src={course.image}
+            alt={course.image}
             width="300px"
             style={{ borderRadius: "20px" }}
           />

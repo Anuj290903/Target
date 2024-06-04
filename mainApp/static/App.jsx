@@ -12,6 +12,7 @@ import UpdateCourse from './components/UpdateCourse';
 import CreateUpload from './components/CreateUpload';
 import UpdateUpload from './components/UpdateUpload';
 import ShowUpload from './components/ShowUpload';
+import Search from './components/Search';
 import { Toaster } from 'react-hot-toast';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
           <Route path="/createUpload/:courseId" element={<CreateUpload />} />
           <Route path="/updateUpload/:uploadId" element={<UpdateUpload />} />
           <Route path="/uploads/:courseId" element={<ShowUpload />} />
+          <Route path="/search/:query" element={<Search />} />
         </Routes>
         <Toaster />
       </Router>

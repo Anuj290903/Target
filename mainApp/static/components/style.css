@@ -38,7 +38,22 @@
   max-width: 80%;
 }
 
-.button-style {
+.input {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.button, .button-style {
+  width: 100%;
+  max-width: 200px;
+  margin: 8px 0;
+}
+/* .button-style {
   background-color: #5c1cbc;
   color: white;
   border: 0;
@@ -48,7 +63,7 @@
   border-radius: 50px;
   width: 12rem;
   height: 3.2rem;
-}
+} */
 
 .why-target-strip {
   width: 100%;

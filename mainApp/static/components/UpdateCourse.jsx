@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import CreateCourse from "./CreateCourse";
 import { useParams } from "react-router-dom";
+import { useGetAPI } from "./useGetAPI";
 
 function UpdateCourse() {
   const { courseId } = useParams();
+  const [data, error, isLoading] = useGetAPI(`http://localhost:8000/courses_api/${courseId}`)
   const [course, setCourse] = useState({
     title: "",
     description: "",
@@ -11,26 +13,16 @@ function UpdateCourse() {
     image: null,
     published: false
   });
-
   useEffect(() => {
-    fetch(`http://localhost:8000/courses_api/${courseId}`, {
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setCourse({
-          id: data.course.id || "",
-          title: data.course.title || "",
-          description: data.course.description || "",
-          price: data.course.price || "",
-          image: data.course.image || null,
-          published: data.course.published || false,
-        });
-      })
-      .catch((err) => console.log(err));
-  }, [courseId]);
+    if (data && data.course) setCourse({
+        id: data.course.id || "",
+        title: data.course.title || "",
+        description: data.course.description || "",
+        price: data.course.price || "",
+        image: data.course.image || null,
+        published: data.course.published || false,
+      });  
+  }, [data]);
 
   return (
     <div>

@@ -1,5 +1,8 @@
 import React from 'react';
 "@mui/material/Typography";
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { Main, openState } from "./AppNavBar";
@@ -9,11 +12,39 @@ import "./style.css";
 function LandingPage() {
   const [isLoggedIn] = useRecoilState(adminIsLoggedInState);
   const [open] = useRecoilState(openState);
+  const [query, setQuery] = useState("");
   const navigate = useNavigate();
   console.log(isLoggedIn);
   return (
     <Main open={open}>
       <div className="landing-page-container">
+      <TextField
+          className="input"
+          label="Query"
+          variant="outlined"
+          type="text"
+          value={query ? query : ""}
+          placeholder="Search for Lectures"
+          onChange={(e) => setQuery(e.target.value)}
+          InputProps={{
+            style: {
+              backgroundColor: 'white',
+              color: 'black'
+            }
+          }}
+        />
+        <Button
+          className="button"
+          variant="contained"
+          onClick={() => navigate(`/search/${query}`)}
+          style={{
+            backgroundColor: '#000000',
+            color: '#fff',
+            margin: '8px 0'
+          }}
+        >
+        Search
+        </Button>
         <div className="text-content">
           <h1 className="title">Admin Dashboard</h1>
 

@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
-from mainApp.views import login_view, logout_view, register_view, index, courses_view, courses_id, course_upload, upload
+from mainApp.views import login_view, logout_view, register_view, index, courses_view, courses_id, course_upload, upload, search_view
 from django.conf import settings
 from django.conf.urls.static import static
 # router = DefaultRouter()
@@ -33,6 +33,7 @@ urlpatterns = [
     path('courses_api/<int:ID>', courses_id, name='courses_id_api'),
     path('course_upload_api/<int:ID>', course_upload, name='course_upload_api'),
     path('upload_api/<int:ID>', upload, name='upload_api'),
+    path('search_api/<str:query>', search_view, name='search_api'),
     # path('', include(router.urls)),
     # path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     # path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

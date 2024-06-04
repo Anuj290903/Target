@@ -12,13 +12,16 @@ from .serializers import CourseSerializer, UploadSerializer
 from django.core import serializers
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from collections import defaultdict
+from django.db.models import Q
+import Levenshtein
 
-# Add image upload in courses
+# Implement editability for admin in front-end
 # Implement custom hooks to improve reusability
 # Add access control for users and admin
 # Implement React Query for making get requests
 # Implement Context API for state management
-# Add a search bar for courses
+# Imporve the search bar fuzzy accuracy and relevance ranking
 # Completely transform and improve the front-end.
 # Texts are slightly left shifted and all characters are not visible
 # for no courses (in ShowCourse) and no uploads in (ShowUploads)
@@ -141,6 +144,59 @@ def courses_id(request, ID):
         return JsonResponse({'course': serializer.data}, status=200)
 
     return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+THRESHOLD = 2
+
+def tokenize_string(string):
+    return set(string.lower().split())
+
+def calculate_similarity(string1, string2):
+    if not string1 or not string2:
+        return 100
+    return Levenshtein.distance(string1.lower(), string2.lower()) 
+
+def fuzzy_match(tokens, upload_ids_seen):
+    upload_entities = Upload.objects.all()
+    fuzzy_results = []
+
+    for token in tokens:
+        for upload in upload_entities:
+            similarity = 100
+            similarity = min(calculate_similarity(upload.title, token), similarity)
+            if similarity <= THRESHOLD and upload.id not in upload_ids_seen:
+                fuzzy_results.append({
+                    'id': upload.id,
+                    'title': upload.title,
+                    'description': upload.description,
+                    'course_id': upload.course,
+                    'uploaded_at': upload.uploaded_at,
+                    'vidFile': upload.vidFile,
+                    'probSet': upload.probSet,
+                })
+                upload_ids_seen.add(upload.id)
+
+    # Sort fuzzy_results by similarity (Levenshtein distance) in ascending order
+    # fuzzy_results.sort(key=lambda x: x[1])
+
+    return fuzzy_results[:50]
+
+def search_view(request, query):
+    tokens = query.split()
+    upload_query = Q()
+    upload_ids_seen = set()
+    for token in tokens:
+        upload_query |= Q(**{f'title__istartswith': token})
+
+    upload_results = Upload.objects.filter(upload_query)[:50]
+    for upload in upload_results:
+        upload_ids_seen.add(upload.id)
+    upload_results = list(upload_results.values())
+    if len(upload_results) < 50:    
+        fuzzy_results = fuzzy_match(tokens, upload_ids_seen) 
+        upload_results = upload_results + fuzzy_results
+    print("Size of upload_results:", len(upload_results))
+    print(upload_results)
+    return JsonResponse({'results': upload_results})
 
 def course_upload(request, ID):
     course = Course.objects.get(id=ID)

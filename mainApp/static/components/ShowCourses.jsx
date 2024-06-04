@@ -1,5 +1,5 @@
 import React from 'react'; 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import CourseCard from "./CourseCard";
 import { Typography } from "@mui/material";
 import "../index.css";
@@ -8,6 +8,7 @@ import axios from "axios";
 import { Main, openState } from "./AppNavBar";
 import "./coursesStyles.css";
 import Skeleton from "@mui/material/Skeleton";
+import { useGetAPI } from "./useGetAPI";
 
 const coursesState = atom({
   key: "coursesState",
@@ -17,23 +18,11 @@ const coursesState = atom({
 function ShowCourses() {
   const [courses, setCourses] = useRecoilState(coursesState);
   const [open] = useRecoilState(openState);
-  const [isLoading, setIsLoading] = useState(false);
+  const [courseData, courseError, isLoading] = useGetAPI("http://localhost:8000/courses_api")
 
   useEffect(() => {
-    setIsLoading(true);
-    axios
-      .get("http://localhost:8000/courses_api", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((res) => {
-        console.log(res.data)
-        setCourses(res.data.courses);
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setIsLoading(false));
-  }, []);
+    if (courseData && courseData.courses) setCourses(courseData.courses);
+  }, [courseData, setCourses]);
 
   return (
     <>

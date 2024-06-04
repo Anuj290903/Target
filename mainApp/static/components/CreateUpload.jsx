@@ -3,25 +3,6 @@ import UploadForm from "./UploadForm";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-// const [videoSrc , setVideoSrc] = useState("");
-// const handleChange = ({file}) => {
-//   var reader = new FileReader();
-//   console.log(file)
-//   var url = URL.createObjectURL(file.originFileObj);
-//   setVideoSrc(url);
-// };
-
-// import "../node_modules/video-react/dist/video-react.css";
-// import { Player } from "video-react";
-
-//   <Player
-//       playsInline
-//       src={videoSrc}
-//       fluid={false}
-//       width={480}
-//       height={272}
-//   />
-
 
 function CreateUpload(props) {
   const navigate = useNavigate();

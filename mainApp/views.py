@@ -11,8 +11,10 @@ from .models import User, Course, Upload
 from .serializers import CourseSerializer, UploadSerializer
 from django.core import serializers
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
 # Add image upload in courses
+# Implement custom hooks to improve reusability
 # Add access control for users and admin
 # Implement React Query for making get requests
 # Implement Context API for state management
@@ -85,16 +87,20 @@ def courses_view(request):
         courses_list = list(courses.values())
         return JsonResponse({'courses' : courses_list})
     elif request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            teacher = User.objects.get(username="Siddhant")
-            course = Course(title=data.get('title'), description=data.get('description'), price=data.get('price'), published=data.get('published'), instructor=teacher)
-            course.save()
-
-            return JsonResponse({'Success': 'Saved Successfully'})
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)  
-
+        data = request.POST
+        files = request.FILES
+        teacher = User.objects.get(username="Siddhant")
+        published_value = data.get('published')
+        pubVal = False
+        if published_value.lower() in ['true', '1']:
+            pubVal = True
+        elif published_value.lower() in ['false', '0']:
+            pubVal = False
+        else:
+            raise ValidationError("Invalid value for published field")
+        course = Course(title=data.get('title'), description=data.get('description', ""), price=data.get('price'), published=pubVal, instructor=teacher, image=files.get('image'))
+        course.save()
+        return JsonResponse({'Success': 'Saved Successfully'}) 
 
 @csrf_exempt
 def courses_id(request, ID):
@@ -104,16 +110,26 @@ def courses_id(request, ID):
         return JsonResponse({'error': 'Course not found'}, status=404)
     
     if request.method == 'DELETE':
+        if course.image:
+            course.image.delete()
         course.delete()
         return JsonResponse({'message': 'Course deleted successfully'}, status=200)
 
-    elif request.method == 'PUT':
+    elif request.method == 'POST':
         try:
-            data = json.loads(request.body)
+            data = request.POST
+            files = request.FILES
             course.title = data.get('title', course.title)
             course.description = data.get('description', course.description)
             course.price = data.get('price', course.price)
-            course.published = data.get('published', course.published)
+            published_value = data.get('published')
+            if published_value.lower() in ['true', '1']:
+                course.published = True
+            elif published_value.lower() in ['false', '0']:
+                course.published = False
+            else:
+                raise ValidationError("Invalid value for published field")
+            course.image = files.get('image', course.image)
             # course.instructor = data.get('instructor', course.instructor)
             course.save()
             return JsonResponse({'message': 'Course updated successfully'}, status=200)
@@ -164,10 +180,6 @@ def upload(request, ID):
 
     elif request.method == 'POST':
         data = request.POST
-
-        for key, value in data.items():
-            print(f"POST key: {key}, value: {value}")
-
         if data.get('title'):
             upload.title = data.get('title')
         if data.get('description'):

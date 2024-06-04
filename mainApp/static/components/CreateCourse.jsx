@@ -8,7 +8,7 @@ function CreateCourse(props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [imageLink, setImageLink] = useState("");
+  const [image, setImage] = useState(null);
   const [published, setPublished] = useState(false);
 
   useEffect(() => {
@@ -16,31 +16,31 @@ function CreateCourse(props) {
       setTitle(props.course.title || "");
       setDescription(props.course.description || "");
       setPrice(props.course.price || "");
-      setImageLink(props.course.imageLink || "");
+      setImage(props.course.image || null);
       setPublished(props.course.published || false);
     }
   }, [props.course]);
 
   function createCourse() {
+    const formData = new FormData()
+    formData.append("title", title)
+    if (description) formData.append("description", description)
+    formData.append("price", price)
+    formData.append("published", published)
+    if (image) formData.append("image", image)
     fetch("http://localhost:8000/courses_api", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        // "Content-Type": "multipart/form-data",
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
-      body: JSON.stringify({
-        title,
-        description,
-        price,
-        imageLink,
-        published,
-      }),
+      body: formData,
     })
       .then((response) => response.json())
       .then((data) => {
         toast.success(data.message);
         setDescription("");
-        setImageLink("");
+        setImage(null);
         setTitle("");
         setPrice("");
         setPublished(false);
@@ -50,19 +50,19 @@ function CreateCourse(props) {
   }
 
   function updateCourse() {
+    const formData = new FormData()
+    formData.append("title", title)
+    if (description) formData.append("description", description)
+    formData.append("price", price)
+    formData.append("published", published)
+    if (image) formData.append("image", image)
     fetch(`http://localhost:8000/courses_api/${props.course.id}`, {
-      method: "PUT",
+      method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        // "Content-Type": "application/json",
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
-      body: JSON.stringify({
-        title,
-        description,
-        price,
-        imageLink,
-        published,
-      }),
+      body: formData,
     })
       .then((response) => response.json())
       .then((data) => {
@@ -83,8 +83,8 @@ function CreateCourse(props) {
       setDescription={setDescription}
       price={price}
       setPrice={setPrice}
-      imageLink={imageLink}
-      setImageLink={setImageLink}
+      image={image}
+      setImage={setImage}
       published={published}
       setPublished={setPublished}
     />

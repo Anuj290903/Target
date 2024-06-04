@@ -8,7 +8,7 @@ function UpdateCourse() {
     title: "",
     description: "",
     price: "",
-    imageLink: "",
+    image: null,
     published: false
   });
 
@@ -25,7 +25,7 @@ function UpdateCourse() {
           title: data.course.title || "",
           description: data.course.description || "",
           price: data.course.price || "",
-          imageLink: data.course.imageLink || "",
+          image: data.course.image || null,
           published: data.course.published || false,
         });
       })

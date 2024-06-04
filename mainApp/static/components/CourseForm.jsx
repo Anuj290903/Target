@@ -21,8 +21,8 @@ function CourseForm({
   setDescription,
   price = '',
   setPrice,
-  imageLink = '',
-  setImageLink,
+  image = null,
+  setImage,
   published = false,
   setPublished,
 }) {
@@ -71,14 +71,14 @@ function CourseForm({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
-        <TextField
-          className="input"
-          label="Image URL"
-          variant="outlined"
-          type="text"
-          value={imageLink}
-          onChange={(e) => setImageLink(e.target.value)}
+        <input
+          type="file"
+          id="image"
+          accept="image/*"
+          onChange={(e) => setImage(e.target.files[0])}
+          style={{ display: 'block', marginTop: '20px' }}
         />
+        <label htmlFor="image" style={{ marginBottom: '10px' }}>Upload Course Display Picture</label>
         <FormControl>
           <InputLabel
             style={{ paddingRight: '5px' }}
@@ -88,7 +88,7 @@ function CourseForm({
           </InputLabel>
           <OutlinedInput
             id="outlined-adornment-amount"
-            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+            startAdornment={<InputAdornment position="start">Rs.</InputAdornment>}
             label="Amount"
             value={price}
             onChange={(e) => setPrice(e.target.value)}

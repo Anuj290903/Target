@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Card from "@mui/material/Card";
 import PropTypes from "prop-types";
-// import CardMedia from "@mui/material/CardMedia";
+import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -12,12 +12,6 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 
 function CourseCard(props) {
-  // 
-  // Just before Card Content if image is there <CardMedia
-  //           sx={{ height: 200, width: 350 }}
-  //           image={props.course.imageLink}
-  //           title={props.course.title}
-  //          /> 
   const navigate = useNavigate();
   const [isMoveOver, setIsMoueOver] = useState(false);
   const [courses, setCourses] = useRecoilState(coursesState);
@@ -54,6 +48,11 @@ function CourseCard(props) {
         onMouseOver={() => setIsMoueOver(true)}
         onMouseLeave={() => setIsMoueOver(false)}
       >
+        {props.course.image && <CardMedia
+          sx={{ height: 200, width: 350 }}
+          image={`http://127.0.0.1:8000/media/image/${props.course.image.split('/').pop()}`}
+          title={props.course.title}
+        /> }
         <CardContent>
           <Typography
             gutterBottom

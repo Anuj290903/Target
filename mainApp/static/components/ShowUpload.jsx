@@ -29,6 +29,7 @@ function ShowUpload() {
   return (
     <>
       <Main open={open}>
+        <div className="shift-right">
         <Typography
           variant="h4"
           component="div"
@@ -61,6 +62,7 @@ function ShowUpload() {
                 : "Oops! There are still no uploads. Make a new upload so that it can be accessed. "}
             </>
           )}
+        </div>
         </div>
       </Main>
     </>

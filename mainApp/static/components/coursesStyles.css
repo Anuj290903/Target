@@ -83,3 +83,36 @@
     width: 500px;
   }
 }
+
+.shift-right {
+  margin-left:15%; /* Adjust the percentage as needed */
+}
+
+/* Small screens (576px and below) */
+@media (max-width: 576px) {
+  .lshift-right {
+    margin-left: 0;
+  }
+}
+
+/* Medium screens (768px and below) */
+@media (max-width: 768px) {
+  .shift-right {
+    margin-left: 0;
+  }
+}
+
+/* Large screens (992px and below) */
+@media (max-width: 992px) {
+  .shift-right {
+    margin-left: 0;
+  }
+}
+
+/* Extra large screens (1200px and below) */
+@media (max-width: 1200px) {
+  .shift-right {
+    margin-left: 0;
+  }
+}
+

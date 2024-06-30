@@ -1,0 +1,22 @@
+/* responsive.css */
+
+/* Default styles for mobile screens */
+#appNavBar {
+    display: none;
+  }
+  
+  #mainContent {
+    margin-left: 0;
+  }
+  
+  /* Styles for laptop screens and larger */
+  @media (min-width: 1024px) {
+    #appNavBar {
+      display: block;
+    }
+  
+    #mainContent {
+      margin-left: 240px; /* Adjust based on your sidebar width */
+    }
+  }
+  

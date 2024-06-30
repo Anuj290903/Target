@@ -25,7 +25,12 @@ import Button from "@mui/material/Button";
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import TextField from '@mui/material/TextField';
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
 import "./style.css";
+import 'bootstrap/dist/css/bootstrap.css';
+import './responsive.css';  // Ensure this import for responsive styles
 
 const drawerWidth = 240;
 
@@ -79,11 +84,12 @@ const openState = atom({
   default: false,
 });
 
-export default function AppNavBar() {
+function AppNavBar() {
   const theme = useTheme();
   const [open, setOpen] = useRecoilState(openState);
   const [admin, setAdmin] = useRecoilState(adminState);
   const [isLoading, setIsLoading] = useState(false);
+  const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
@@ -95,7 +101,7 @@ export default function AppNavBar() {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex" }} id="appNavBar">
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -125,6 +131,30 @@ export default function AppNavBar() {
           >
             Target
           </Typography>
+          <div className="input-group" style={{ maxWidth: '300px', width: '100%' }}>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search for Lectures"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              style={{
+                backgroundColor: 'white',
+                borderRadius: '24px 0 0 24px',
+              }}
+            />
+            <button
+              className="btn btn-primary"
+              type="button"
+              onClick={() => navigate(`/search/${query}`)}
+              style={{
+                backgroundColor: '#000000',
+                borderRadius: '0 24px 24px 0',
+              }}
+            >
+              <SearchIcon />
+            </button>
+          </div>
           {admin.isLoggedIn ? (
             <Button
               color="inherit"
@@ -239,3 +269,4 @@ export default function AppNavBar() {
 }
 
 export { Main, openState };
+export default AppNavBar;

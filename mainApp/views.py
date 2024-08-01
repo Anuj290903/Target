@@ -1,98 +1,91 @@
-import json
+import json, requests
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-from .models import User, Course, Upload
+from .models import User, Course, Upload, Purchase
 from .serializers import CourseSerializer, UploadSerializer
-from django.core import serializers
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from collections import defaultdict
+from functools import wraps
 from django.db.models import Q
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated
 import Levenshtein
 
+# Handle CSRF and JWT verfication. Currently disabled
+# Sort the JWT middleware verification issue.
+# On refresh ensure user doesn't get redirected to the course page, and navigate to a page if not granted permission for the person logging in.
+# Correct file delete in uplaods and courses with the courses.
 # Implement editability for admin in front-end
 # Implement custom hooks to improve reusability
-# Add access control for users and admin
 # Implement React Query for making get requests
-# Implement Context API for state management
 # Imporve the search bar fuzzy accuracy and relevance ranking
-# Completely transform and improve the front-end.
-# Texts are slightly left shifted and all characters are not visible
-# for no courses (in ShowCourse) and no uploads in (ShowUploads)
 # Implement Shared Database and Cloud Service
 # Add payment gateway
 # Add live video and chat functionality in course (WebRTC) 
 
+def method_role_required(allowed_methods_for_all=None, allowed_methods_for_admin=None):
+    if allowed_methods_for_all is None:
+        allowed_methods_for_all = []
+    if allowed_methods_for_admin is None:
+        allowed_methods_for_admin = []
+
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs):
+            if request.method in allowed_methods_for_all:
+                return view_func(request, *args, **kwargs)
+            # if not request.user.is_authenticated:
+            #     return JsonResponse({'error': 'Unauthorized access! Not logged in'}, status=401)
+            if  request.user.is_staff:
+                if request.method in allowed_methods_for_admin:
+                    return view_func(request, *args, **kwargs)
+                else:
+                    return JsonResponse({'error': f'Method {request.method} not allowed for admin'}, status=405)
+            
+            return JsonResponse({'error': f'Unauthorized access! Not allowed for {request.user.first_name}'}, status=401)
+
+        return _wrapped_view
+    return decorator
+
+# def authenticate(request):
+#     auth_header = request.headers.get('Authorization')
+#     if not auth_header:
+#             return JsonResponse({"error": "Authorization header is missing"}, status=401)
+        
+#     token_type, token = auth_header.split(' ')
+#     if token_type.lower() != 'bearer':
+#         return JsonResponse({"error": "Authorization header must start with Bearer"}, status=401)
+    
+#     try:
+#         response = requests.post(url, json=payload, headers=headers)
+#         response.raise_for_status()  # Raise an error for bad status codes
+#     except requests.exceptions.RequestException as e:
+#         return JsonResponse({'error': str(e)}, status=500)
+
+#     data = response.json()  # Assuming the response is in JSON format
+
+#     return user
+
 def index(request):
     return render(request, "index.html")
 
-@csrf_exempt
-def login_view(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            email = data.get('username')
-            password = data.get('password')
-
-            # Check if email or password is missing
-            if not email or not password:
-                return JsonResponse({'error': 'Email and password are required.'}, status=400)
-
-            # Perform authentication
-            user = authenticate(request, username=email, password=password)
-
-            if user is not None:
-                login(request, user)
-                return JsonResponse({'message': 'Login successful'})
-            else:
-                return JsonResponse({'error': 'Invalid credentials'}, status=400)
-
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
-
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
-
-def logout_view(request):
-    logout(request)
-    return JsonResponse({'message': 'Logout successful'})
-
-def register_view(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            email = data.get('username')
-            password = data.get('password')
-
-            # Check if email or password is missing
-            if not email or not password:
-                return JsonResponse({'error': 'Email and password are required.'}, status=400)
-
-            # Create user
-            user = User.objects.create_user(email=email, password=password, username=email)
-            user.save()
-
-            return JsonResponse({'message': 'User created successfully'})
-
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
-
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
-
+# @method_role_required(allowed_methods_for_all=[], allowed_methods_for_admin=['POST'])
+@permission_classes([IsAuthenticated])
 def courses_view(request):
+    print(request.user.first_name)
     if request.method == 'GET':
         courses = Course.objects.all()
         courses_list = list(courses.values())
         return JsonResponse({'courses' : courses_list})
+    
     elif request.method == 'POST':
         data = request.POST
         files = request.FILES
-        teacher = User.objects.get(username="Siddhant")
+        teacher = User.objects.get(email="anuj.29sept@gmail.com")
         published_value = data.get('published')
         pubVal = False
         if published_value.lower() in ['true', '1']:
@@ -103,9 +96,9 @@ def courses_view(request):
             raise ValidationError("Invalid value for published field")
         course = Course(title=data.get('title'), description=data.get('description', ""), price=data.get('price'), published=pubVal, instructor=teacher, image=files.get('image'))
         course.save()
-        return JsonResponse({'Success': 'Saved Successfully'}) 
+        return JsonResponse({'message': 'Saved Successfully'}) 
 
-@csrf_exempt
+# @method_role_required(allowed_methods_for_all=['GET'], allowed_methods_for_admin=['POST', 'DELETE'])
 def courses_id(request, ID):
     try:
         course = Course.objects.get(id=ID)
@@ -145,59 +138,7 @@ def courses_id(request, ID):
 
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-THRESHOLD = 2
-
-def tokenize_string(string):
-    return set(string.lower().split())
-
-def calculate_similarity(string1, string2):
-    if not string1 or not string2:
-        return 100
-    return Levenshtein.distance(string1.lower(), string2.lower()) 
-
-def fuzzy_match(tokens, upload_ids_seen):
-    upload_entities = Upload.objects.all()
-    fuzzy_results = []
-
-    for token in tokens:
-        for upload in upload_entities:
-            similarity = 100
-            similarity = min(calculate_similarity(upload.title, token), similarity)
-            if similarity <= THRESHOLD and upload.id not in upload_ids_seen:
-                fuzzy_results.append({
-                    'id': upload.id,
-                    'title': upload.title,
-                    'description': upload.description,
-                    'course_id': upload.course,
-                    'uploaded_at': upload.uploaded_at,
-                    'vidFile': upload.vidFile,
-                    'probSet': upload.probSet,
-                })
-                upload_ids_seen.add(upload.id)
-
-    # Sort fuzzy_results by similarity (Levenshtein distance) in ascending order
-    # fuzzy_results.sort(key=lambda x: x[1])
-
-    return fuzzy_results[:50]
-
-def search_view(request, query):
-    tokens = query.split()
-    upload_query = Q()
-    upload_ids_seen = set()
-    for token in tokens:
-        upload_query |= Q(**{f'title__istartswith': token})
-
-    upload_results = Upload.objects.filter(upload_query)[:50]
-    for upload in upload_results:
-        upload_ids_seen.add(upload.id)
-    upload_results = list(upload_results.values())
-    if len(upload_results) < 50:    
-        fuzzy_results = fuzzy_match(tokens, upload_ids_seen) 
-        upload_results = upload_results + fuzzy_results
-    print("Size of upload_results:", len(upload_results))
-    print(upload_results)
-    return JsonResponse({'results': upload_results})
-
+# @method_role_required(allowed_methods_for_all=['GET'], allowed_methods_for_admin=['POST'])
 def course_upload(request, ID):
     course = Course.objects.get(id=ID)
     if request.method == 'POST':
@@ -213,13 +154,14 @@ def course_upload(request, ID):
             probSet=probSet,
         )
         upload.save()
-        return JsonResponse({'Success' : 'Created Successfully'}, status=201) 
+        return JsonResponse({'message' : 'Created Successfully'}, status=201) 
     elif request.method == 'GET':
         uploads = Upload.objects.filter(course=course)
         uploads_list = list(uploads.values())
         return JsonResponse({'uploads' : uploads_list})
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
+# @method_role_required(allowed_methods_for_all=['GET'], allowed_methods_for_admin=['POST', 'DELETE'])
 def upload(request, ID):
     try:
         upload = Upload.objects.get(id=ID)
@@ -260,3 +202,83 @@ def upload(request, ID):
         return JsonResponse({'upload': serializer.data}, status=200)
 
     return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+# @method_role_required(allowed_methods_for_all=['GET', 'POST'])
+def purchase_view(request):
+    if request.method == 'GET':
+        user = request.user
+        purchases = Purchase.objects.filter(user=user)
+        purchases_list = []
+        for purchase in purchases:
+            purchases_list.append({
+                'id': purchase.id,
+                'course_id': purchase.course.id,
+                'course_title': purchase.course.title,
+            })
+        return JsonResponse({'purchases': purchases_list})
+
+    elif request.method == 'POST':
+        data = request.POST
+        user = request.user
+        course = Course.objects.get(id=data.get('course_id'))
+        purchase = Purchase(user=user, course=course)
+        purchase.save()
+        return JsonResponse({'message': 'Course purchased successfully'})
+
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+# SEARCH BAR IMPLEMENTATION 
+
+THRESHOLD = 2
+
+def tokenize_string(string):
+    return set(string.lower().split())
+
+def calculate_similarity(string1, string2):
+    if not string1 or not string2:
+        return 100
+    return Levenshtein.distance(string1.lower(), string2.lower()) 
+
+def fuzzy_match(tokens, upload_ids_seen):
+    upload_entities = Upload.objects.all()
+    fuzzy_results = []
+
+    for token in tokens:
+        for upload in upload_entities:
+            similarity = 100
+            similarity = min(calculate_similarity(upload.title, token), similarity)
+            if similarity <= THRESHOLD and upload.id not in upload_ids_seen:
+                fuzzy_results.append({
+                    'id': upload.id,
+                    'title': upload.title,
+                    'description': upload.description,
+                    'course_id': upload.course,
+                    'uploaded_at': upload.uploaded_at,
+                    'vidFile': upload.vidFile,
+                    'probSet': upload.probSet,
+                })
+                upload_ids_seen.add(upload.id)
+
+    # Sort fuzzy_results by similarity (Levenshtein distance) in ascending order
+    # fuzzy_results.sort(key=lambda x: x[1])
+
+    return fuzzy_results[:50]
+
+# @method_role_required(allowed_methods_for_all=['GET'])
+def search_view(request, query):
+    tokens = query.split()
+    upload_query = Q()
+    upload_ids_seen = set()
+    for token in tokens:
+        upload_query |= Q(**{f'title__istartswith': token})
+
+    upload_results = Upload.objects.filter(upload_query)[:50]
+    for upload in upload_results:
+        upload_ids_seen.add(upload.id)
+    upload_results = list(upload_results.values())
+    if len(upload_results) < 50:    
+        fuzzy_results = fuzzy_match(tokens, upload_ids_seen) 
+        upload_results = upload_results + fuzzy_results
+    print("Size of upload_results:", len(upload_results))
+    print(upload_results)
+    return JsonResponse({'results': upload_results})

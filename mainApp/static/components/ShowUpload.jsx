@@ -4,10 +4,10 @@ import UploadCard from "./UploadCard";
 import { Typography } from "@mui/material";
 import "../index.css";
 import { atom, useRecoilState } from "recoil";
-import axios from "axios";
 import { useParams } from "react-router-dom";
-import { Main, openState } from "./AppNavBar";
-import "./coursesStyles.css";
+import { Main } from "./AppNavBar";
+import { useSelector } from 'react-redux';
+import "./uploadsStyles.css";
 import Skeleton from "@mui/material/Skeleton";
 import { useGetAPI } from "./useGetAPI";
 
@@ -18,7 +18,7 @@ const uploadsState = atom({
 
 function ShowUpload() {
   const [uploads, setUploads] = useRecoilState(uploadsState);
-  const [open] = useRecoilState(openState);
+  const open = useSelector((state) => state.navbar.isOpen);
   const { courseId } = useParams();
   const [data, error, isLoading] = useGetAPI(`http://localhost:8000/course_upload_api/${courseId}`);
 

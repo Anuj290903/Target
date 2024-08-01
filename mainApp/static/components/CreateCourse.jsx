@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import CourseForm from "./CourseForm";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { useSelector } from "react-redux";
 
 function CreateCourse(props) {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ function CreateCourse(props) {
   const [price, setPrice] = useState("");
   const [image, setImage] = useState(null);
   const [published, setPublished] = useState(false);
+  const csrfToken = useSelector((state) => state.csrf.token)
 
   useEffect(() => {
     if (props.isUpdate) {
@@ -32,7 +34,8 @@ function CreateCourse(props) {
       method: "POST",
       headers: {
         // "Content-Type": "multipart/form-data",
-        Authorization: "Bearer " + localStorage.getItem("token"),
+        Authorization: "JWT " + localStorage.getItem("access"),
+        'X-CSRFToken': csrfToken,
       },
       body: formData,
     })
@@ -60,7 +63,7 @@ function CreateCourse(props) {
       method: "POST",
       headers: {
         // "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
+        Authorization: "JWT " + localStorage.getItem("access"),
       },
       body: formData,
     })

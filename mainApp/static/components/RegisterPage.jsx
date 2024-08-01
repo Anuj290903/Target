@@ -1,56 +1,64 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { Spinner } from '../components/Spinner'
 import { Button, TextField, Card, Typography, CircularProgress, Link, Grid } from '@mui/material';
 import axios from 'axios';
-import { toast } from 'react-hot-toast';
-import { adminState } from '../store/atoms/admin';
-import '../index.css'; // Import updated styles
+import { useDispatch, useSelector } from 'react-redux';
+import {signup} from '../redux/userSlice.js';
+import '../index.css';
 
 function RegisterPage() {
-  const [admin, setAdmin] = useState({ email: "", password: "" });
-  const setAdminRecoil = useSetRecoilState(adminState);
-  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [re_password, setRePassword] = useState("");
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
+  const dispatch = useDispatch();
+  const status = useSelector(state => state.user.status);
+  const error = useSelector(state => state.user.error);
   const [message, setMessage] = useState(null);
   const navigate = useNavigate();
 
+  const checkLoading = status === 'loading';
+
   const handleRegister = async () => {
-    if (admin.email.trim() === "" || admin.password.trim() === "") {
-      setMessage("Email/Password field cannot be empty.");
+    if (email.trim() === "" || password.trim() === "" || first_name.trim == "" || last_name.trim == "") {
+      setMessage("All fields are required!");
       return;
-    } else {
-      try {
-        setIsLoading(true);
-        const response = await axios.post(
-          "http://localhost:8000/register_api",
-          {
-            username: admin.email,
-            password: admin.password,
-          }
-        );
-
-        setAdminRecoil({
-          email: admin.email,
-          username: admin.email.split("@")[0].toUpperCase(),
-          isLoggedIn: true,
-        });
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("isLoggedIn", true);
-        localStorage.setItem("email", admin.email);
-
-        setMessage(null);
-        toast.success(response.data.message);
-        navigate("/courses");
-        setIsLoading(false);
-      } catch (err) {
-        console.error(err);
-        setMessage(err.response?.data?.message || "Registration failed. Please try again.");
-        setIsLoading(false);
-      }
     }
-  };
-
-  return (
+    else if (re_password != password){
+      setMessage("Passwords do not match.");
+      return;
+    }
+    else {
+      try{
+        dispatch(signup({
+          first_name,
+          last_name,
+          email,
+          password,
+          re_password
+        }));
+        console.log(status)
+          if(status === 'signupSuccess')
+          {
+            setMessage(null);
+            toast.success("Registration Successful");
+            navigate("/EmailActivate");
+          }
+          else if(status === 'signupFail')
+          {
+            console.error(error);
+            setMessage(error || "Registration failed. Please try again.");
+          }
+      } catch(err){
+        console.error(err);
+        setMessage("Registration failed. Please try again.");
+      }
+        return;
+    }
+  }
+  return ( checkLoading ? <Spinner text="Loading..." /> :
     <Grid container className="page" justifyContent="center" alignItems="center">
       <Grid item xs={11} sm={8} md={4}>
         <Card className="form">
@@ -65,12 +73,38 @@ function RegisterPage() {
           <TextField
             fullWidth
             margin="normal"
+            id="firstName"
+            label="firstName"
+            variant="outlined"
+            type="text"
+            placeholder="First Name*"
+            value={first_name}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            id="lastName"
+            label="lastName"
+            variant="outlined"
+            type="text"
+            placeholder="Last Name*"
+            value={last_name}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+          />
+          <TextField
+            fullWidth
+            margin="normal"
             id="email"
             label="Email"
             variant="outlined"
             type="text"
-            value={admin.email}
-            onChange={(e) => setAdmin((prev) => ({ ...prev, email: e.target.value }))}
+            placeholder="Email*"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <TextField
             fullWidth
@@ -79,17 +113,30 @@ function RegisterPage() {
             label="Password"
             variant="outlined"
             type="password"
-            value={admin.password}
-            onChange={(e) => setAdmin((prev) => ({ ...prev, password: e.target.value }))}
+            placeholder="Password*"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            id="rePassword"
+            label="rePassword"
+            variant="outlined"
+            type="password"
+            placeholder="Confirm Password*"
+            value={re_password}
+            onChange={(e) => setRePassword(e.target.value)}
+            required
           />
           <Button
             fullWidth
             variant="contained"
             className="button"
             onClick={handleRegister}
-            disabled={isLoading}
           >
-            {isLoading ? <CircularProgress size={24} /> : "Register"}
+          Register
           </Button>
           <Typography className="subtitle">
             Already a user?{' '}
@@ -102,5 +149,4 @@ function RegisterPage() {
     </Grid>
   );
 }
-
 export default RegisterPage;

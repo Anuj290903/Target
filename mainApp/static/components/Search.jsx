@@ -4,8 +4,8 @@ import { useParams } from "react-router-dom";
 import { useGetAPI } from "./useGetAPI";
 import { Typography } from "@mui/material";
 import Skeleton from "@mui/material/Skeleton";
-import { Main, openState } from "./AppNavBar";
-import { useRecoilState } from "recoil";
+import { Main } from "./AppNavBar";
+import { useSelector } from 'react-redux';
 import UploadCard from "./UploadCard";
 import "./coursesStyles.css";
 import "../index.css";
@@ -13,7 +13,7 @@ import "../index.css";
 function Search() {
     const { query } = useParams();
     const [results, setResults] = useState([]);
-    const [open] = useRecoilState(openState);
+    const open = useSelector((state) => state.navbar.isOpen);
     const [data, error, isLoading] = useGetAPI(`http://localhost:8000/search_api/${query}`);
     useEffect(() => {
         if (data && data.results) setResults(data.results);

@@ -10,7 +10,7 @@ export const useGetAPI = (url) => {
         fetch(url, {
             method: "GET",
             headers: {
-                Authorization: "Bearer " + localStorage.getItem("token"),
+                Authorization: "JWT " + localStorage.getItem("access"),
             },
         })
         .then((res) => res.json())

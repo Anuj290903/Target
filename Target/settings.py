@@ -93,8 +93,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'target',
-        'USER': 'siddhant',
-        'PASSWORD': '12345678',
+        'USER': 'USERNAME',
+        'PASSWORD': 'PASSWORD',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -103,8 +103,8 @@ DATABASES = {
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'anuj.sept29@gmail.com'
-EMAIL_HOST_PASSWORD = 'jabyaqplwebczjmg'
+EMAIL_HOST_USER = 'EMAIL'
+EMAIL_HOST_PASSWORD = 'PASSWORD'
 EMAIL_USE_TLS = True
 AUTH_USER_MODEL = 'mainApp.User'
 

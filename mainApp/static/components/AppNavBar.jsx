@@ -18,16 +18,12 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { atom, useRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
-import { adminState } from "../store/atoms/admin";
 import Button from "@mui/material/Button";
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
-import InputAdornment from '@mui/material/InputAdornment';
 import "./style.css";
 import 'bootstrap/dist/css/bootstrap.css';
 import './responsive.css';  // Ensure this import for responsive styles
@@ -79,15 +75,9 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-const openState = atom({
-  key: "openState",
-  default: false,
-});
-
 function AppNavBar() {
   const theme = useTheme();
-  const [open, setOpen] = useRecoilState(openState);
-  const [admin, setAdmin] = useRecoilState(adminState);
+  const [open, setOpen] = useRecoilState("");
   const [isLoading, setIsLoading] = useState(false);
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
@@ -116,7 +106,7 @@ function AppNavBar() {
           <IconButton
             color="inherit"
             aria-label="open drawer"
-            onClick={() => admin.isLoggedIn && handleDrawerOpen()}
+            onClick={() => handleDrawerOpen()}
             edge="start"
             sx={{ mr: 2, ...(open && { display: "none" }) }}
           >
@@ -155,39 +145,34 @@ function AppNavBar() {
               <SearchIcon />
             </button>
           </div>
-          {admin.isLoggedIn ? (
-            <Button
-              color="inherit"
-              onClick = {async () => {
-                try {
-                    setIsLoading(true);
-                    const response = await axios.post(
-                      "http://localhost:8000/logout_api",
-                      {
-                        username: localStorage.getItem("email"),
-                      }
-                    );
-                    setAdmin({
-                      email: "",
-                      username: "",
-                      isLoggedIn: false,
-                    });
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("isLoggedIn");
-                    localStorage.removeItem("email");
-                    toast.success(response.data.message);
-                    setIsLoading(false);
-                    navigate("/");
-                  } catch (err) {
-                    console.error(err);
-                    setMessage(err.response?.data?.message || "Logout failed. Please try again.");
-                    setIsLoading(false);
-                  }
-              }}
-            >
-              Logout
-            </Button>
-          ) : (
+          {(
+          //   <Button
+          //     color="inherit"
+          //     onClick = {async () => {
+          //       try {
+          //           setIsLoading(true);
+          //           const response = await axios.post(
+          //             "http://localhost:8000/logout_api",
+          //             {
+          //               username: localStorage.getItem("email"),
+          //             }
+          //           );
+          //           localStorage.removeItem("token");
+          //           localStorage.removeItem("isLoggedIn");
+          //           localStorage.removeItem("email");
+          //           toast.success(response.data.message);
+          //           setIsLoading(false);
+          //           navigate("/");
+          //         } catch (err) {
+          //           console.error(err);
+          //           setMessage(err.response?.data?.message || "Logout failed. Please try again.");
+          //           setIsLoading(false);
+          //         }
+          //     }}
+          //   >
+          //     Logout
+          //   </Button>
+          // ) : (
             <div>
               <Button color="inherit" onClick={() => navigate("/register")}>
                 Register
@@ -213,14 +198,14 @@ function AppNavBar() {
         open={open}
       >
         <DrawerHeader>
-          {admin.isLoggedIn && <List>
+          {<List>
             {/* add user name and email */}
             <ListItem key='name' disablePadding>
               <ListItemButton>
                 <ListItemIcon>
                   <AccountBoxIcon />
                 </ListItemIcon>
-                <ListItemText primary={admin?.username} secondary={admin?.email} />
+                <ListItemText primary={"admin?.username"} secondary={'admin?.email'} />
               </ListItemButton>
             </ListItem>
           </List>}
@@ -268,5 +253,5 @@ function AppNavBar() {
   );
 }
 
-export { Main, openState };
+export { Main };
 export default AppNavBar;

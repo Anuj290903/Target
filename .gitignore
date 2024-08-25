@@ -1,3 +1,4 @@
 *.pyc
 __pycache__/
 mainApp/media/*
+node_modules/

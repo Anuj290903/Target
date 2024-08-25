@@ -15,14 +15,6 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 import Levenshtein
 
-# Handle CSRF and JWT verfication. Currently disabled
-# Sort the JWT middleware verification issue.
-# On refresh ensure user doesn't get redirected to the course page, and navigate to a page if not granted permission for the person logging in.
-# Correct file delete in uplaods and courses with the courses.
-# Implement editability for admin in front-end
-# Implement custom hooks to improve reusability
-# Implement React Query for making get requests
-# Imporve the search bar fuzzy accuracy and relevance ranking
 # Implement Shared Database and Cloud Service
 # Add payment gateway
 # Add live video and chat functionality in course (WebRTC) 
@@ -51,30 +43,10 @@ def method_role_required(allowed_methods_for_all=None, allowed_methods_for_admin
         return _wrapped_view
     return decorator
 
-# def authenticate(request):
-#     auth_header = request.headers.get('Authorization')
-#     if not auth_header:
-#             return JsonResponse({"error": "Authorization header is missing"}, status=401)
-        
-#     token_type, token = auth_header.split(' ')
-#     if token_type.lower() != 'bearer':
-#         return JsonResponse({"error": "Authorization header must start with Bearer"}, status=401)
-    
-#     try:
-#         response = requests.post(url, json=payload, headers=headers)
-#         response.raise_for_status()  # Raise an error for bad status codes
-#     except requests.exceptions.RequestException as e:
-#         return JsonResponse({'error': str(e)}, status=500)
-
-#     data = response.json()  # Assuming the response is in JSON format
-
-#     return user
-
 def index(request):
     return render(request, "index.html")
 
-# @method_role_required(allowed_methods_for_all=[], allowed_methods_for_admin=['POST'])
-@permission_classes([IsAuthenticated])
+@method_role_required(allowed_methods_for_all=[], allowed_methods_for_admin=['POST'])
 def courses_view(request):
     print(request.user.first_name)
     if request.method == 'GET':
@@ -98,7 +70,7 @@ def courses_view(request):
         course.save()
         return JsonResponse({'message': 'Saved Successfully'}) 
 
-# @method_role_required(allowed_methods_for_all=['GET'], allowed_methods_for_admin=['POST', 'DELETE'])
+@method_role_required(allowed_methods_for_all=['GET'], allowed_methods_for_admin=['POST', 'DELETE'])
 def courses_id(request, ID):
     try:
         course = Course.objects.get(id=ID)
@@ -138,7 +110,7 @@ def courses_id(request, ID):
 
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-# @method_role_required(allowed_methods_for_all=['GET'], allowed_methods_for_admin=['POST'])
+@method_role_required(allowed_methods_for_all=['GET'], allowed_methods_for_admin=['POST'])
 def course_upload(request, ID):
     course = Course.objects.get(id=ID)
     if request.method == 'POST':
@@ -161,7 +133,7 @@ def course_upload(request, ID):
         return JsonResponse({'uploads' : uploads_list})
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-# @method_role_required(allowed_methods_for_all=['GET'], allowed_methods_for_admin=['POST', 'DELETE'])
+@method_role_required(allowed_methods_for_all=['GET'], allowed_methods_for_admin=['POST', 'DELETE'])
 def upload(request, ID):
     try:
         upload = Upload.objects.get(id=ID)
@@ -203,7 +175,7 @@ def upload(request, ID):
 
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-# @method_role_required(allowed_methods_for_all=['GET', 'POST'])
+@method_role_required(allowed_methods_for_all=['GET', 'POST'])
 def purchase_view(request):
     if request.method == 'GET':
         user = request.user
@@ -264,7 +236,7 @@ def fuzzy_match(tokens, upload_ids_seen):
 
     return fuzzy_results[:50]
 
-# @method_role_required(allowed_methods_for_all=['GET'])
+@method_role_required(allowed_methods_for_all=['GET'])
 def search_view(request, query):
     tokens = query.split()
     upload_query = Q()
